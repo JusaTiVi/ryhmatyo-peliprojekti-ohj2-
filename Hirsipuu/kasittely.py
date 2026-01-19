@@ -1,24 +1,50 @@
 import random
-while True:
-    with open("sanat.txt") as tiedosto:
-        sanat = tiedosto.read().split()
-    sana = random.choice(sanat)
-    vaarat = []
-    oikeat = []
-    kirjaimet = []
-    yritys = input("Anna kirjain: ")
-    vastaus = list(sana)
-    vaarat = 0
-    if yritys not in vastaus:
-        vaarat += 1
-    else:
-        if yritys not in oikeat:
-            oikeat.append(yritys)
-    if vaarat == 8:
-        print("hävisit pelin!")
-        break
-    for kirjain in vastaus:
-        if kirjain not in kirjaimet:
-            kirjaimet.append(kirjain)
-    if len(oikeat) == len(kirjaimet):
-        print("voitit pelin!")
+tiedosto = "sanat.txt"
+class Hirsipuu:
+    def __init__(self, tiedosto):
+        self.tiedosto = tiedosto
+        self.sana = self.arpa()
+        self.vaarat = 0
+        self.oikeat = []
+        self.kirjaimet = list(set(self.sana))
+        self.max_vaarat = 8
+
+    def arpa(self):
+        with open(self.tiedosto) as file:
+            sanat = file.read().split()
+        return random.choice(sanat)
+
+    def kysy_kirjain(self):
+        return input("Anna kirjain: ")
+
+    def tarkista_kirjain(self, kirjain):
+        if kirjain not in self.sana:
+            self.vaarat += 1
+        else:
+            if kirjain not in self.oikeat:
+                self.oikeat.append(kirjain)
+
+    def tarkista_havio(self):
+        if self.vaarat >= self.max_vaarat:
+            print("Hävisit pelin!")
+            return True
+        return False
+
+    def tarkista_voitto(self):
+        if len(self.oikeat) == len(self.kirjaimet):
+            print("Voitit pelin!")
+            return True
+        return False
+
+    def pelaa(self):
+        while True:
+            kirjain = self.kysy_kirjain()
+            self.tarkista_kirjain(kirjain)
+
+            if self.tarkista_havio():
+                break
+            if self.tarkista_voitto():
+                break
+            
+peli = Hirsipuu(tiedosto)
+peli.pelaa()
